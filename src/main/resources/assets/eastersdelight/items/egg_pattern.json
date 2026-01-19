@@ -1,0 +1,112 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:component",
+    "component": "eastersdelight:egg_pattern",
+    "cases": [
+      {
+        "when": [
+          "petals"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "eastersdelight:item/petals_egg_pattern"
+        }
+      },
+      {
+        "when": [
+          "stripes_3"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "eastersdelight:item/stripes_3_egg_pattern"
+        }
+      },
+      {
+        "when": [
+          "blocks"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "eastersdelight:item/blocks_egg_pattern"
+        }
+      },
+      {
+        "when": [
+          "creeper"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "eastersdelight:item/creeper_egg_pattern"
+        }
+      },
+      {
+        "when": [
+          "heart"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "eastersdelight:item/heart_egg_pattern"
+        }
+      },
+      {
+        "when": [
+          "dipped"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "eastersdelight:item/dipped_egg_pattern"
+        }
+      },
+      {
+        "when": [
+          "stripes"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "eastersdelight:item/stripes_egg_pattern"
+        }
+      },
+      {
+        "when": [
+          "split"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "eastersdelight:item/split_egg_pattern"
+        }
+      },
+      {
+        "when": [
+          "dots"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "eastersdelight:item/dots_egg_pattern"
+        }
+      },
+      {
+        "when": [
+          "stripes_2"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "eastersdelight:item/stripes_2_egg_pattern"
+        }
+      },
+      {
+        "when": [
+          "waves"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "eastersdelight:item/waves_egg_pattern"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "eastersdelight:item/stripes_egg_pattern"
+    }
+  }
+}

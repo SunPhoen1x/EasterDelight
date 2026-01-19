@@ -7,14 +7,22 @@ import com.phantomwing.eastersdelight.item.custom.DyedEggItem;
 import com.phantomwing.eastersdelight.item.custom.EggPatternItem;
 import com.phantomwing.eastersdelight.food.FoodValues;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashSet;
+import java.util.function.Function;
 
 public class ModItems {
     public static final int EGG_STACK_SIZE = 16;
@@ -23,37 +31,37 @@ public class ModItems {
 
     public static LinkedHashSet<Item> CREATIVE_TAB_ITEMS = Sets.newLinkedHashSet();
 
-    // Blocks
     public static final Item EGG_PAINTER = registerBlockWithTab(ModBlocks.EGG_PAINTER);
 
-    // Eggs
-    public static final Item BOILED_EGG = registerWithTab("boiled_egg", new Item(
-            baseItem().food(FoodValues.BOILED_EGG)));
-    public static final Item EGG_SLICE = registerWithTab("egg_slice", new Item(
-            baseItem().food(FoodValues.EGG_SLICE)));
+    public static final Item BOILED_EGG = registerWithTab("boiled_egg", foodItem(FoodValues.BOILED_EGG));
+    public static final Item EGG_SLICE = registerWithTab("egg_slice", foodItem(FoodValues.EGG_SLICE, Consumables.DEFAULT_FOOD));
 
-    // Food
-    public static final Item CHOCOLATE_EGG = registerWithTab("chocolate_egg", new Item(
-            baseItem().food(FoodValues.CHOCOLATE_EGG)));
-    public static final Item BUNNY_COOKIE = registerWithTab("bunny_cookie", new Item(
-            baseItem().food(vectorwing.farmersdelight.common.FoodValues.COOKIES)));
+    public static final Item CHOCOLATE_EGG = registerWithTab("chocolate_egg", foodItem(FoodValues.CHOCOLATE_EGG));
+    public static final Item BUNNY_COOKIE = registerWithTab("bunny_cookie", foodItem(vectorwing.farmersdelight.common.FoodValues.COOKIES));
 
-    // Patterns
-    public static final Item EGG_PATTERN = registerWithTab("egg_pattern", new EggPatternItem(
-            baseItem()));
+    public static final Item EGG_PATTERN = registerWithTab("egg_pattern", EggPatternItem::new, baseItem());
 
-    // Dyed eggs
-    public static final Item DYED_EGG = registerWithTab("dyed_egg", new DyedEggItem(
-            baseItem().food(FoodValues.BOILED_EGG)));
+    public static final Item DYED_EGG = registerWithTab("dyed_egg", DyedEggItem::new, foodItem(FoodValues.BOILED_EGG));
 
-
-    // Helper functions
     public static Item.Properties baseItem() {
         return new Item.Properties();
     }
 
-    public static Item.Properties bottleItem() {
-        return baseItem().craftRemainder(Items.GLASS_BOTTLE).stacksTo(BOTTLE_STACK_SIZE);
+    public static Item.Properties foodItem(FoodProperties food) {
+        return foodItem(food, null);
+    }
+
+    public static Item.Properties foodItem(FoodProperties food, @Nullable Consumable consumable) {
+        return baseItem()
+                .food(food)
+                .component(DataComponents.CONSUMABLE, consumable != null ? consumable : Consumables.DEFAULT_FOOD);
+    }
+
+    public static Item.Properties bottleItem(@Nullable FoodProperties food, @Nullable Consumable consumable) {
+        Item.Properties props = baseItem().craftRemainder(Items.GLASS_BOTTLE).stacksTo(BOTTLE_STACK_SIZE)
+                .component(DataComponents.CONSUMABLE, consumable != null ? consumable : Consumables.DEFAULT_DRINK);
+        if (food != null) props.food(food);
+        return props;
     }
 
     public static Item.Properties bowlItem() {
@@ -64,33 +72,33 @@ public class ModItems {
         return baseItem().craftRemainder(Items.BOWL).stacksTo(1);
     }
 
-    // Registry functions
-    private static Item registerWithTab(String name, Item item) {
-        Item registeredItem = Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(EastersDelight.MOD_ID, name), item);
+    private static Item registerWithTab(String name, Item.Properties props) {
+        return registerWithTab(name, Item::new, props);
+    }
 
-        CREATIVE_TAB_ITEMS.add(registeredItem);
+    private static Item registerWithTab(String name, Function<Item.Properties, Item> function, Item.Properties props) {
+        ResourceLocation loc = ResourceLocation.fromNamespaceAndPath(EastersDelight.MOD_ID, name);
+        props.setId(ResourceKey.create(Registries.ITEM, loc));
 
-        return registeredItem;
+        Item item = function.apply(props);
+        CREATIVE_TAB_ITEMS.add(item);
+        return Registry.register(BuiltInRegistries.ITEM, loc, item);
     }
 
     private static Item registerBlockWithTab(Block block) {
-        String name = BuiltInRegistries.BLOCK.getKey(block).getPath();
-        Item item = Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(EastersDelight.MOD_ID, name),
-                new BlockItem(block, baseItem()));
-
-        CREATIVE_TAB_ITEMS.add(item);
-
-        return item;
+        return registerBlockWithTab(block, baseItem());
     }
 
-    private static Item registerBlockWithTab(Block block, Item.Properties settings) {
+    private static Item registerBlockWithTab(Block block, Item.Properties props) {
         String name = BuiltInRegistries.BLOCK.getKey(block).getPath();
-        Item item = Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(EastersDelight.MOD_ID, name),
-                new BlockItem(block, settings));
+        ResourceLocation loc = ResourceLocation.fromNamespaceAndPath(EastersDelight.MOD_ID, name);
 
+        props.useBlockDescriptionPrefix();
+        props.setId(ResourceKey.create(Registries.ITEM, loc));
+
+        BlockItem item = new BlockItem(block, props);
         CREATIVE_TAB_ITEMS.add(item);
-
-        return item;
+        return Registry.register(BuiltInRegistries.ITEM, loc, item);
     }
 
     public static void registerModItems() {

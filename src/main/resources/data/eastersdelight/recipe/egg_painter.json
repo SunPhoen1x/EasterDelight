@@ -2,19 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "#": {
-      "tag": "minecraft:planks"
-    },
-    "/": {
-      "item": "minecraft:iron_ingot"
-    },
-    "E": {
-      "item": "eastersdelight:boiled_egg"
-    }
+    "P": "minecraft:oak_planks",
+    "I": "minecraft:iron_ingot",
+    "E": "eastersdelight:boiled_egg"
   },
   "pattern": [
-    "/E/",
-    "###"
+    "IEI",
+    "PPP"
   ],
   "result": {
     "count": 1,

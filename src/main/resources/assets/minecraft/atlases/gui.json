@@ -1,0 +1,16 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "eastersdelight:item/empty_slot_egg"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "eastersdelight:item/empty_slot_color"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "eastersdelight:item/empty_slot_pattern"
+    }
+  ]
+}

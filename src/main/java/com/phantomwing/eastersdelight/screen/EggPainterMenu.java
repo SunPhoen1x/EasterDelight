@@ -32,36 +32,37 @@ public class EggPainterMenu extends ItemCombinerMenu {
     }
 
     public EggPainterMenu(int containerId, Inventory playerInventory, ContainerLevelAccess access) {
-        super(ModMenuTypes.EGG_PAINTER, containerId, playerInventory, access);
+        super(ModMenuTypes.EGG_PAINTER, containerId, playerInventory, access, createInputSlotDefinitions());
         this.level = playerInventory.player.level();
     }
-
-    protected @NotNull ItemCombinerMenuSlotDefinition createInputSlotDefinitions() {
+    protected static ItemCombinerMenuSlotDefinition createInputSlotDefinitions() {
         return ItemCombinerMenuSlotDefinition.create()
-                .withSlot(EGG_SLOT, 49, 20, (item) -> item.is(ModTags.Items.PAINTABLE_EGGS)) // Must be a paintable egg
-                .withSlot(BASE_COLOR_SLOT, 31, 49, (item) -> item.getItem() instanceof DyeItem) // Base color
-                .withSlot(PATTERN_SLOT, 49, 49, (item) -> item.is(ModItems.EGG_PATTERN)) // Egg pattern
-                .withSlot(PATTERN_COLOR_SLOT, 67, 49, (item) -> item.getItem() instanceof DyeItem) // Pattern color
+                .withSlot(EGG_SLOT, 49, 20, (item) -> item.is(ModTags.Items.PAINTABLE_EGGS))
+                .withSlot(BASE_COLOR_SLOT, 31, 49, (item) -> item.getItem() instanceof DyeItem)
+                .withSlot(PATTERN_SLOT, 49, 49, (item) -> item.is(ModItems.EGG_PATTERN))
+                .withSlot(PATTERN_COLOR_SLOT, 67, 49, (item) -> item.getItem() instanceof DyeItem)
                 .withResultSlot(RESULT_SLOT, 125, 49)
                 .build();
     }
 
+    @Override
     protected boolean isValidBlock(BlockState state) {
         return state.is(ModBlocks.EGG_PAINTER);
     }
 
+    @Override
     protected boolean mayPickup(@NotNull Player player, boolean hasStack) {
         return hasRequiredInputs();
     }
 
+    @Override
     protected void onTake(@NotNull Player player, ItemStack stack) {
-        stack.onCraftedBy(player.level(), player, stack.getCount());
+        stack.onCraftedBy(player, stack.getCount());
         this.resultSlots.awardUsedRecipes(player, this.getRelevantItems());
 
         this.shrinkStackInSlot(EGG_SLOT);
         this.shrinkStackInSlot(BASE_COLOR_SLOT);
 
-        // Check if a pattern + pattern color have been provided.
         if (hasPatternInputs()) {
             this.shrinkStackInSlot(PATTERN_SLOT);
             this.shrinkStackInSlot(PATTERN_COLOR_SLOT);
@@ -89,65 +90,57 @@ public class EggPainterMenu extends ItemCombinerMenu {
         }
     }
 
+    @Override
     public void createResult() {
-        // Check if the base input is valid.
         if (hasRequiredInputs()) {
-            // Create the easter egg item.
             ItemStack itemstack = new ItemStack(ModItems.DYED_EGG);
 
-            // Apply a base color.
             DyeItem baseDye = (DyeItem)this.inputSlots.getItem(BASE_COLOR_SLOT).getItem();
             itemstack.set(DataComponents.BASE_COLOR, baseDye.getDyeColor());
 
-            // Check if the pattern input is valid.
-            if (hasPatternInputs())
-            {
-                // Apply the egg pattern.
+            if (hasPatternInputs()) {
                 EggPattern eggPattern = this.inputSlots.getItem(PATTERN_SLOT).get(ModDataComponents.EGG_PATTERN);
                 itemstack.set(ModDataComponents.EGG_PATTERN, eggPattern);
 
-                // Apply the pattern color
                 DyeItem patternDye = (DyeItem)this.inputSlots.getItem(PATTERN_COLOR_SLOT).getItem();
                 itemstack.set(ModDataComponents.PATTERN_COLOR, patternDye.getDyeColor());
             }
 
-            // Show the painted item in the result slot.
             if (itemstack.isItemEnabled(this.level.enabledFeatures())) {
                 this.resultSlots.setItem(0, itemstack);
             }
         } else {
-            // Input is invalid: Clear the result slot.
             this.resultSlots.setItem(0, ItemStack.EMPTY);
         }
     }
 
     private boolean hasRequiredInputs() {
-        // Egg and Color slot are required.
         return !this.inputSlots.getItem(EGG_SLOT).isEmpty()
                 && !this.inputSlots.getItem(BASE_COLOR_SLOT).isEmpty();
     }
 
     private boolean hasPatternInputs() {
-        return !this.inputSlots.getItem(PATTERN_SLOT).isEmpty()  // We should have a pattern
-                && !this.inputSlots.getItem(PATTERN_COLOR_SLOT).isEmpty()  // And a pattern color
-                && !this.inputSlots.getItem(PATTERN_COLOR_SLOT).is(this.inputSlots.getItem(BASE_COLOR_SLOT).getItem()); // Which should be different from the base color
+        return !this.inputSlots.getItem(PATTERN_SLOT).isEmpty()
+                && !this.inputSlots.getItem(PATTERN_COLOR_SLOT).isEmpty()
+                && !this.inputSlots.getItem(PATTERN_COLOR_SLOT).is(this.inputSlots.getItem(BASE_COLOR_SLOT).getItem());
     }
 
     public int getSlotToQuickMoveTo(@NotNull ItemStack stack) {
         return this.findSlotToQuickMoveTo(stack).orElse(EGG_SLOT);
     }
 
+    @Override
     public boolean canTakeItemForPickAll(@NotNull ItemStack stack, Slot slot) {
         return slot.container != this.resultSlots && super.canTakeItemForPickAll(stack, slot);
     }
 
+    @Override
     public boolean canMoveIntoInputSlots(@NotNull ItemStack stack) {
         return this.findSlotToQuickMoveTo(stack).isPresent();
     }
 
     private OptionalInt findSlotToQuickMoveTo(ItemStack stack) {
-        if (stack.is(ModTags.Items.PAINTABLE_EGGS))
-        {
+        if (stack.is(ModTags.Items.PAINTABLE_EGGS)) {
             return OptionalInt.of(EGG_SLOT);
         } else if (stack.is(ModItems.EGG_PATTERN)) {
             return OptionalInt.of(PATTERN_SLOT);
@@ -157,7 +150,6 @@ public class EggPainterMenu extends ItemCombinerMenu {
             }
             return OptionalInt.of(PATTERN_COLOR_SLOT);
         }
-
         return OptionalInt.empty();
     }
 }

@@ -1,27 +1,15 @@
 {
   "type": "farmersdelight:cooking",
+  "cookingtime": 100,
   "experience": 1.0,
   "ingredients": [
-    {
-      "item": "minecraft:egg"
-    },
-    {
-      "item": "minecraft:egg"
-    },
-    {
-      "item": "minecraft:egg"
-    },
-    {
-      "item": "minecraft:egg"
-    },
-    {
-      "item": "minecraft:egg"
-    },
-    {
-      "item": "minecraft:egg"
-    }
+    "minecraft:egg",
+    "minecraft:egg",
+    "minecraft:egg",
+    "minecraft:egg",
+    "minecraft:egg",
+    "minecraft:egg"
   ],
-  "recipe_book_tab": "misc",
   "result": {
     "count": 6,
     "id": "eastersdelight:boiled_egg"

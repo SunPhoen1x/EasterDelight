@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.8-SNAPSHOT'
+    id 'fabric-loom' version '1.14-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -66,11 +66,6 @@ dependencies {
 
     // Dependencies
     modImplementation "vectorwing:FarmersDelight:${project.minecraft_version}-${project.farmersdelight_version}+refabricated"
-
-    // Test mods
-    modLocalRuntime "curse.maven:cloth-config-348521:5729125"
-    modLocalRuntime "curse.maven:jei-238222:5802635"
-    modLocalRuntime "squeek.appleskin:appleskin-fabric:${appleskin_version}"
 }
 
 processResources {
