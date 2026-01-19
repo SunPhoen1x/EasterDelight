@@ -11,6 +11,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 
 import java.util.List;
 import java.util.Optional;
@@ -89,7 +91,14 @@ public class EggPainterScreen extends ItemCombinerScreen<EggPainterMenu> {
             }
         }
 
-        optional.ifPresent(component -> guiGraphics.renderTooltip(this.font, this.font.split(component, 115), mouseX, mouseY));
+        optional.ifPresent(component -> guiGraphics.renderTooltip(
+                this.font,
+                List.of(ClientTooltipComponent.create(component.getVisualOrderText())),
+                mouseX,
+                mouseY,
+                DefaultTooltipPositioner.INSTANCE,
+                null
+        ));
     }
 
     private static ResourceLocation getGUITexture(String textureName) {
